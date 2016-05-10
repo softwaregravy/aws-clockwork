@@ -43,6 +43,10 @@ RSpec.configure do |config|
 
   config.expect_with(:rspec) { |c| c.syntax = [:expect, :should] }
 
+  config.before(:each) do 
+    AwsTickwork::Engine.clear!
+  end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
