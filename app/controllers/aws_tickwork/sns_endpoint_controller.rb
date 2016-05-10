@@ -6,8 +6,8 @@ module AwsTickwork
   class SnsEndpointController < ApplicationController
     before_action :log_raw_post
     before_action :verify_aws_signature
-    # not working, amazon hasn't implemented despite docs saying they have
-    #before_action :my_http_authenticate
+    before_action :authenticate
+    force_ssl if AwsTickwork::Engine.https_only
 
     def notify
       body = JSON.parse(request.raw_post)
@@ -25,12 +25,12 @@ module AwsTickwork
 
     protected
 
-    def message_type
-      request.headers["HTTP_X_AMZ_SNS_MESSAGE_TYPE"]
+    def log_raw_post
+      Rails.logger.info request.raw_post
     end
 
-    def handle_notification(body)
-      Tickwork.run
+    def message_type
+      request.headers["HTTP_X_AMZ_SNS_MESSAGE_TYPE"]
     end
 
     def handle_subscription_confirmation(body)
@@ -44,8 +44,8 @@ module AwsTickwork
       end
     end
 
-    def log_raw_post
-      Rails.logger.info request.raw_post
+    def handle_notification(body)
+      Tickwork.run
     end
 
     def verify_aws_signature
@@ -57,18 +57,17 @@ module AwsTickwork
       true
     end
 
-    # very close to method names in rails, give this a dumb one so we never have a conflict
-    def my_http_authenticate
+    REALM = "SuperSecret"
+
+    def authenticate
       if AwsTickwork::Engine.http_username.present? 
-        authenticated = authenticate_with_http_basic do |username, password|
-          AwsTickwork::Engine.username == username && AwsTickwork::Engine.password == password
+        auth_result = authenticate_or_request_with_http_digest(REALM) do |username|
+          if username == AwsTickwork::Engine.http_username
+            AwsTickwork::Engine.http_password
+          end
         end
-        unless authenticated
-          head :unauthorized
-          return false
-        end
-        true
       end
+
     end
   end
 end

@@ -31,6 +31,15 @@ describe AwsTickwork::Engine do
     }.to raise_error AwsTickwork::Engine::ValidationError
   end
 
+  it "password required if username supplied" do 
+    expect {
+      AwsTickwork::Engine.setup do |c|
+        c.https_only = true
+        c.http_username = "john"
+      end
+    }.to raise_error AwsTickwork::Engine::ValidationError
+  end
+
   it "refuses to send passwords in the clear" do 
     expect {
       AwsTickwork::Engine.setup do |c|
