@@ -28,7 +28,7 @@ rake aws_tickwork:install:migrations
 rake db:migrate SCOPE=aws_tickwork
 ```
 
-Create a tickwork.rb file. Lots of details in [Tickwork](https://github.com/softwaregravy/tickwork)
+Create a config/initializers/tickwork.rb file. Lots of details in [Tickwork](https://github.com/softwaregravy/tickwork)
 ```
 require 'tickwork'
 module Tickwork
@@ -41,6 +41,7 @@ module Tickwork
   end
 end
 ```
+Note: it's important this is an initalizer or else you have to configure it every time.
 
 Configure AWS
 ==============
