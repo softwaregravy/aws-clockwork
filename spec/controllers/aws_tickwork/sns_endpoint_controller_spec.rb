@@ -55,12 +55,13 @@ RSpec.describe AwsTickwork::SnsEndpointController do
         @stub_get = stub_request(:get, "https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription&Token=2336412f37fb687f5d51e6e241d44a2cb136210ba5740edb1677bedf5b391f309278d834dd116c60cc79f83cd406f74a72fdcd59e1a0440811f2b4772e9a91e01a0777dc0bf63e351b0af514d3bf5dc583f9fcbef3b1bee87a7081b16f0524807e9f6abf67a7378fba68bac711e8c830d7ad7e86c51059bae43780296dfdb228&TopicArn=arn:aws:sns:us-east-1:372178782529:Lancaster-Staging").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => "", :headers => {})
+        request.env["HTTP_X_AMZ_SNS_MESSAGE_TYPE"] = "SubscriptionConfirmation"
       end
       it "responds ok" do 
         post :notify, subscription_confirmation_body
         response.should be_ok
       end
-      it "confirms the subjscription" do 
+      it "confirms the subscription" do 
         post :notify, subscription_confirmation_body
         assert_requested(@stub_get)
       end
@@ -71,13 +72,21 @@ RSpec.describe AwsTickwork::SnsEndpointController do
     end
     describe "unrecognized" do 
       it "returns ok" do 
+        # no header
+        post :notify, bad_type_body
+        response.should be_ok
+      end
+      it "returns ok" do 
+        request.env["HTTP_X_AMZ_SNS_MESSAGE_TYPE"] = "Unrecognized for sure"
         post :notify, bad_type_body
         response.should be_ok
       end
     end
     describe "Notification" do 
+      before do
+        request.env["HTTP_X_AMZ_SNS_MESSAGE_TYPE"] = "Notification"
+      end
       it "responds ok" do 
-        post :notify, notification_body
         response.should be_ok
       end
       it "runs Tickwork" do 

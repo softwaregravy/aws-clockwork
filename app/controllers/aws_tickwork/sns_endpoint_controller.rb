@@ -9,17 +9,24 @@ module AwsTickwork
 
     def notify
       body = JSON.parse(request.raw_post)
-      # TODO verify aws signature
-      if body["Type"] == "SubscriptionConfirmation"
+      case message_type
+      when "SubscriptionConfirmation"
         handle_subscription_confirmation(body)
-      elsif body["Type"] == "Notification"
+      when "Notification"
         handle_notification(body)
+      else
+        # uncrecognized type or type missing
+        Rails.logger.warn "Unrecognized message type: #{message_type}"
       end
-
       head :ok
     end
 
     protected
+
+    def message_type
+      request.headers["HTTP_X_AMZ_SNS_MESSAGE_TYPE"]
+    end
+
     def handle_notification(body)
       Tickwork.run
     end
@@ -42,7 +49,8 @@ module AwsTickwork
     def verify_aws_signature
       verifier = Aws::SNS::MessageVerifier.new
       unless verifier.authentic?(request.raw_post)
-        head :unauthorized and return false
+        head :unauthorized 
+        return false
       end
       true
     end

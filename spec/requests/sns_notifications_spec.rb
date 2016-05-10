@@ -6,8 +6,7 @@ RSpec.describe "SNS driving tickwork events", type: :request do
     allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authenticate!)
     allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(true)
   end
-  let (:sample_notification) do 
-    sample = <<-END
+  let (:sample_notification) { <<-END.squish }
       {
         "Type" : "Notification",
         "MessageId" : "36313258-6c80-508f-a5ae-7df1cb7989f4",
@@ -20,11 +19,9 @@ RSpec.describe "SNS driving tickwork events", type: :request do
         "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:372178782529:Lancaster-Staging:44d97b9e-a40f-4a82-9077-ba24faec9227"
       }
     END
-    sample.squish
-  end
   it "causes a job to run" do 
     Rails.cache.write('tickwork_testing', 0)
-    post "/aws_tickwork/sns_endpoint/notify", sample_notification
+    post "/aws_tickwork/sns_endpoint/notify", sample_notification, {"HTTP_X_AMZ_SNS_MESSAGE_TYPE" => "Notification"}
     response.should be_ok
     Rails.cache.read('tickwork_testing').should == 1
 
