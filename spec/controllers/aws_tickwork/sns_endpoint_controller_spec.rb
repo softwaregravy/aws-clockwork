@@ -47,6 +47,7 @@ RSpec.describe AwsTickwork::SnsEndpointController do
     before do
       allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authenticate!)
       allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(true)
+      AwsTickwork::Engine.clear!
     end
 
   describe "#notify" do 
@@ -98,10 +99,20 @@ RSpec.describe AwsTickwork::SnsEndpointController do
         post :notify, notification_body
       end
       context "with an invalid signature" do 
-        before { expect_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(false) }
         it "should not call Tickwork" do 
+          expect_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(false) 
           expect(Tickwork).not_to receive(:run)
           post :notify, notification_body
+        end
+        context "when authentication is disabled" do 
+          before do
+            allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(false)
+          end
+          it "should run tickwork" do 
+            AwsTickwork::Engine.enable_authenticate = false
+            expect(Tickwork).to receive(:run)
+            post :notify, notification_body
+          end
         end
       end
     end

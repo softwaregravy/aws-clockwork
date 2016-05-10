@@ -6,6 +6,8 @@ module AwsTickwork
   class SnsEndpointController < ApplicationController
     before_action :log_raw_post
     before_action :verify_aws_signature
+    # not working, amazon hasn't implemented despite docs saying they have
+    #before_action :my_http_authenticate
 
     def notify
       body = JSON.parse(request.raw_post)
@@ -48,11 +50,25 @@ module AwsTickwork
 
     def verify_aws_signature
       verifier = Aws::SNS::MessageVerifier.new
-      unless verifier.authentic?(request.raw_post)
+      if AwsTickwork::Engine.enable_authenticate && !verifier.authentic?(request.raw_post)
         head :unauthorized 
         return false
       end
       true
+    end
+
+    # very close to method names in rails, give this a dumb one so we never have a conflict
+    def my_http_authenticate
+      if AwsTickwork::Engine.http_username.present? 
+        authenticated = authenticate_with_http_basic do |username, password|
+          AwsTickwork::Engine.username == username && AwsTickwork::Engine.password == password
+        end
+        unless authenticated
+          head :unauthorized
+          return false
+        end
+        true
+      end
     end
   end
 end

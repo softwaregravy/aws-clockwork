@@ -22,15 +22,7 @@ describe AwsTickwork::Engine do
     AwsTickwork::Engine.enable_authenticate.should == false
   end
 
-  it "needs both username and password, username only" do 
-    expect {
-      AwsTickwork::Engine.setup do |c|
-        c.https_only = true
-        c.http_username = "john"
-      end
-    }.to raise_error AwsTickwork::Engine::ValidationError
-  end
-  it "needs both username and password, password only" do 
+  it "username required if password supplied" do 
     expect {
       AwsTickwork::Engine.setup do |c|
         c.https_only = true

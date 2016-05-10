@@ -24,7 +24,6 @@ RSpec.describe "SNS driving tickwork events", type: :request do
     post "/aws_tickwork/sns_endpoint/notify", sample_notification, {"HTTP_X_AMZ_SNS_MESSAGE_TYPE" => "Notification"}
     response.should be_ok
     Rails.cache.read('tickwork_testing').should == 1
-
   end
 
 end
