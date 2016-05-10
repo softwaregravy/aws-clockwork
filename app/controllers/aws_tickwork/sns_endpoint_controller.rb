@@ -1,11 +1,13 @@
 require_dependency "aws_tickwork/application_controller"
 require 'rest-client'
+require 'tickwork'
 
 module AwsTickwork
   class SnsEndpointController < ApplicationController
     before_action :log_raw_post
     def notify
       body = JSON.parse(request.raw_post)
+      #body = JSON.parse(request.body.read, {:symbolize_names => true})
       # TODO verify aws signature
       if body["Type"] == "SubscriptionConfirmation"
         handle_subscription_confirmation(body)
@@ -28,7 +30,7 @@ module AwsTickwork
         RestClient.get url
       rescue => e
         #TODO what exception come here?
-        ErrorLogger.log_error(e)
+        raise 
       end
     end
 
