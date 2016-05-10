@@ -21,8 +21,8 @@ module AwsTickwork
     end
 
     def self.validate_config(config)
-      if http_password.present? && !http_username.present?
-        raise AwsTickwork::Engine::ValidationError.new 'http_password requires http_user'
+      unless http_password.present? == http_username.present?
+        raise AwsTickwork::Engine::ValidationError.new 'http_password requires http_user, and visa versa'
       end
       if http_username.present? && !https_only
         raise AwsTickwork::Engine::ValidationError.new 'use only https with authentication or else the password is sent in the clear'

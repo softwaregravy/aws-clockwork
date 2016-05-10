@@ -116,5 +116,15 @@ RSpec.describe AwsTickwork::SnsEndpointController do
         end
       end
     end
+    describe "https_only" do 
+      it "does not accept http traffic" do 
+        # This doesn't take effect because the controller already exists ... not sure how to test this one
+        #AwsTickwork::Engine.https_only
+        #request.env["rack.url_scheme"] = "http"
+        #expect(Tickwork).not_to receive(:run)
+        #post :notify, notification_body
+        #response.code.should == 301
+      end
+    end
   end 
 end
