@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.2.6"
   s.add_dependency 'rest-client'
   s.add_dependency 'tickwork'
+  s.add_dependency 'aws-sdk', '~> 2'
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails"

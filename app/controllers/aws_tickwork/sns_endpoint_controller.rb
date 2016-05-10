@@ -5,6 +5,8 @@ require 'tickwork'
 module AwsTickwork
   class SnsEndpointController < ApplicationController
     before_action :log_raw_post
+    before_action :verify_aws_signature
+
     def notify
       body = JSON.parse(request.raw_post)
       # TODO verify aws signature
@@ -35,6 +37,14 @@ module AwsTickwork
 
     def log_raw_post
       Rails.logger.info request.raw_post
+    end
+
+    def verify_aws_signature
+      verifier = Aws::SNS::MessageVerifier.new
+      unless verifier.authentic?(request.raw_post)
+        head :unauthorized and return false
+      end
+      true
     end
   end
 end

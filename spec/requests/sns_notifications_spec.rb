@@ -2,6 +2,10 @@
 require 'rails_helper'
 
 RSpec.describe "SNS driving tickwork events", type: :request do 
+  before do
+    allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authenticate!)
+    allow_any_instance_of(Aws::SNS::MessageVerifier).to receive(:authentic?).and_return(true)
+  end
   let (:sample_notification) do 
     sample = <<-END
       {

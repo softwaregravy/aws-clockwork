@@ -1,3 +1,9 @@
+Gem.loaded_specs['aws_tickwork'].dependencies.each do |d|
+   require d.name
+end
+
+require 'aws_tickwork/engine'
+
 module AwsTickwork
   class Engine < ::Rails::Engine
     isolate_namespace AwsTickwork
