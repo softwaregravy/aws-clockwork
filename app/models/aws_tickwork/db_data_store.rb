@@ -12,10 +12,10 @@
 module AwsTickwork
   class DbDataStore < ActiveRecord::Base
     class << self
-      def get(key)
+      def read(key)
         DbDataStore.where(key: key).take&.value
       end
-      def set(key, value)
+      def write(key, value)
         DbDataStore.find_or_initialize_by(key: key).update_attributes!(value: value)
       end
     end
