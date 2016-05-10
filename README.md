@@ -1,6 +1,8 @@
 AWS Tickwork
 ===============
 
+[![Build Status](https://secure.travis-ci.org/softwaregravy/aws_tickwork.png?branch=master)](http://travis-ci.org/softwaregravy/aws_tickwork) 
+
 Combines  [Tickwork](https://github.com/softwaregravy/tickwork) with an SNS endpoint to let AWS drive your scheduling.
 
 We use AWS Cloudwatch scheduled events to push notifications into SNS which in turn posts back to your app. This lets you run scheduled events without running a separate process.
