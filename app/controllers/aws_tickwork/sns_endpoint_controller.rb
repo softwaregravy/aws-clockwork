@@ -7,7 +7,6 @@ module AwsTickwork
     before_action :log_raw_post
     def notify
       body = JSON.parse(request.raw_post)
-      #body = JSON.parse(request.body.read, {:symbolize_names => true})
       # TODO verify aws signature
       if body["Type"] == "SubscriptionConfirmation"
         handle_subscription_confirmation(body)
