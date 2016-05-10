@@ -13,6 +13,9 @@
 /tmp
 *.log
 
+*.sqlite3
+*.sqlite3-journal
+
 # Ignore coverage
 /coverage
 
