@@ -7,17 +7,19 @@ require "aws_tickwork/version"
 Gem::Specification.new do |s|
   s.name        = "aws_tickwork"
   s.version     = AwsTickwork::VERSION
-  s.authors     = [""]
+  s.authors     = ["John Hinnegan"]
   s.email       = [""]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of AwsTickwork."
-  s.description = "TODO: Description of AwsTickwork."
+  s.homepage    = "https://github.com/softwaregravy/aws_tickwork"
+  s.summary     = "Integrate Cloudwatch, SNS, and Tickwork"
+  s.description = "A scheduling utility dirven by Cloudwatch Events, via SNS, to Rails using Tickwork as the scheduling utility"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.2.6"
+  s.add_dependency 'rest-client'
+  s.add_dependency 'tickwork'
 
   s.add_development_dependency "sqlite3"
 end
