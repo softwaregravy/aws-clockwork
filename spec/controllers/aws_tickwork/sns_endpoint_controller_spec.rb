@@ -75,6 +75,10 @@ RSpec.describe AwsTickwork::SnsEndpointController do
         END
         sample.squish
       end
+      it "responds ok" do 
+        post :notify, sample_notification
+        response.should be_ok
+      end
       it "runs Tickwork" do 
         expect(Tickwork).to receive(:run)
         post :notify, sample_notification
