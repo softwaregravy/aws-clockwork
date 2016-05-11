@@ -57,11 +57,9 @@ module AwsTickwork
       true
     end
 
-    REALM = "SuperSecret"
-
     def authenticate
       if AwsTickwork::Engine.http_username.present? 
-        auth_result = authenticate_or_request_with_http_digest(REALM) do |username|
+        auth_result = authenticate_or_request_with_http_digest(AwsTickwork::REALM) do |username|
           if username == AwsTickwork::Engine.http_username
             AwsTickwork::Engine.http_password
           end

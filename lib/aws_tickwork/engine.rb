@@ -1,5 +1,5 @@
-Gem.loaded_specs['aws_tickwork'].dependencies.each do |d|
-   require d.name
+Gem.loaded_specs['aws_tickwork'].dependencies.select {|g| g.type == :runtime }.each do |d|
+  require d.name
 end
 
 require 'aws_tickwork/engine'
